@@ -1,5 +1,6 @@
 package com.victorglcosta.coursemc;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,20 @@ import com.victorglcosta.coursemc.domain.Address;
 import com.victorglcosta.coursemc.domain.Category;
 import com.victorglcosta.coursemc.domain.City;
 import com.victorglcosta.coursemc.domain.Customer;
+import com.victorglcosta.coursemc.domain.Order;
+import com.victorglcosta.coursemc.domain.Payment;
+import com.victorglcosta.coursemc.domain.PaymentByCard;
+import com.victorglcosta.coursemc.domain.PaymentBySlip;
 import com.victorglcosta.coursemc.domain.Product;
 import com.victorglcosta.coursemc.domain.State;
 import com.victorglcosta.coursemc.domain.enums.CustomerType;
+import com.victorglcosta.coursemc.domain.enums.PaymentStatus;
 import com.victorglcosta.coursemc.repositories.AddressRepository;
 import com.victorglcosta.coursemc.repositories.CategoryRepository;
 import com.victorglcosta.coursemc.repositories.CityRepository;
 import com.victorglcosta.coursemc.repositories.CustomerRepository;
+import com.victorglcosta.coursemc.repositories.OrderRepository;
+import com.victorglcosta.coursemc.repositories.PaymentRepository;
 import com.victorglcosta.coursemc.repositories.ProductRepository;
 import com.victorglcosta.coursemc.repositories.StateRepository;
 
@@ -41,6 +49,12 @@ public class SpringBackendIonicApplication implements CommandLineRunner {
 	
 	@Autowired
 	private AddressRepository addressRepository;
+	
+	@Autowired
+	private OrderRepository orderRepository;
+	
+	@Autowired
+	private PaymentRepository paymentRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBackendIonicApplication.class, args);
@@ -89,6 +103,23 @@ public class SpringBackendIonicApplication implements CommandLineRunner {
 		
 		customerRepository.saveAll(Arrays.asList(cust1));
 		addressRepository.saveAll(Arrays.asList(a1, a2));
+	
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		
+		Order ord1 = new Order(null, sdf.parse("30/09/2017 10:32"), cust1, a1);
+		Order ord2 = new Order(null, sdf.parse("10/10/2017 19:35"), cust1, a2);
+		
+		Payment pay1 = new PaymentByCard(null, PaymentStatus.PAID, ord1, 6);
+		ord1.setPayment(pay1);
+		
+		Payment pay2 = new PaymentBySlip(null, PaymentStatus.PENDING, ord2, sdf.parse("20/10/2017 00:00"), null);
+		ord2.setPayment(pay2);
+		
+		cust1.getOrders().addAll(Arrays.asList(ord1, ord2));
+	
+		orderRepository.saveAll(Arrays.asList(ord1, ord2));
+		paymentRepository.saveAll(Arrays.asList(pay1, pay2));
+
 	}
 
 }
