@@ -13,6 +13,7 @@ import com.victorglcosta.coursemc.domain.Category;
 import com.victorglcosta.coursemc.domain.City;
 import com.victorglcosta.coursemc.domain.Customer;
 import com.victorglcosta.coursemc.domain.Order;
+import com.victorglcosta.coursemc.domain.OrderItem;
 import com.victorglcosta.coursemc.domain.Payment;
 import com.victorglcosta.coursemc.domain.PaymentByCard;
 import com.victorglcosta.coursemc.domain.PaymentBySlip;
@@ -24,6 +25,7 @@ import com.victorglcosta.coursemc.repositories.AddressRepository;
 import com.victorglcosta.coursemc.repositories.CategoryRepository;
 import com.victorglcosta.coursemc.repositories.CityRepository;
 import com.victorglcosta.coursemc.repositories.CustomerRepository;
+import com.victorglcosta.coursemc.repositories.OrderItemRepository;
 import com.victorglcosta.coursemc.repositories.OrderRepository;
 import com.victorglcosta.coursemc.repositories.PaymentRepository;
 import com.victorglcosta.coursemc.repositories.ProductRepository;
@@ -55,6 +57,9 @@ public class SpringBackendIonicApplication implements CommandLineRunner {
 	
 	@Autowired
 	private PaymentRepository paymentRepository;
+	
+	@Autowired
+	private OrderItemRepository orderItemRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBackendIonicApplication.class, args);
@@ -119,7 +124,19 @@ public class SpringBackendIonicApplication implements CommandLineRunner {
 	
 		orderRepository.saveAll(Arrays.asList(ord1, ord2));
 		paymentRepository.saveAll(Arrays.asList(pay1, pay2));
-
+		
+		OrderItem oi1 = new OrderItem(ord1, p1, 0.00, 1, 2000.00);
+		OrderItem oi2 = new OrderItem(ord1, p3, 0.00, 2, 80.00);
+		OrderItem oi3 = new OrderItem(ord2, p2, 100.00, 1, 800.00);
+	
+		ord1.getItems().addAll(Arrays.asList(oi1, oi2));
+		ord2.getItems().addAll(Arrays.asList(oi3));
+		
+		p1.getItems().addAll(Arrays.asList(oi1));
+		p2.getItems().addAll(Arrays.asList(oi3));
+		p3.getItems().addAll(Arrays.asList(oi2));
+		
+		orderItemRepository.saveAll((Arrays.asList(oi1, oi2, oi3)));
 	}
 
 }
