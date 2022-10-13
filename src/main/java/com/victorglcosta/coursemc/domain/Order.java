@@ -19,7 +19,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name="TB_ORDER")
@@ -34,11 +33,9 @@ public class Order implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP) 
 	private Date instant;	
 	
-	@JsonManagedReference
 	@OneToOne(cascade=CascadeType.ALL, mappedBy="order")
 	private Payment payment;
 	
-	@JsonManagedReference
 	@ManyToOne
 	@JoinColumn(name="customer_id")
 	private Customer customer;
